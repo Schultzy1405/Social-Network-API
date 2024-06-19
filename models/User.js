@@ -1,5 +1,4 @@
-const { Schema, Types } = require("mongoose");
-const thoughtSchema = require("./Thought.js");
+const { Schema, model } = require("mongoose");
 
 var validateEmail = function (email) {
   var emailValidation = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -19,8 +18,22 @@ const userSchema = new Schema({
     unique: true,
     validate: [validateEmail, "Please enter a valid email."],
   },
-  thoughts: [thoughtSchema],
-  friends: [userSchema],
+  thoughts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "thought",
+    },
+  ],
+  friends: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "user",
+    },
+  ],
+});
+
+userSchema.virtual("friendCount").get(function () {
+  return this.friends.length;
 });
 
 const User = model("user", userSchema);
