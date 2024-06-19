@@ -25,8 +25,8 @@ module.exports = {
   },
   async createUser(req, res) {
     try {
-      const newUser = await User.create(req.body);
-      res.json(newUser);
+      const user = await User.create(req.body);
+      res.json(user);
     } catch (err) {
       console.log(err);
       res.status(500).json(err);
@@ -56,6 +56,30 @@ module.exports = {
       }
       await Thought.deleteMany({ _id: { $in: user.thoughts } });
       res.json({ message: "User and thoughts deleted!" });
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  },
+  async addFriend(req, res) {
+    try {
+      const user = await User.findOneAndUpdate(
+        { _id: req.params.userId },
+        { $addToSet: { friends: req.params.friendId } },
+        { new: true }
+      );
+      res.json(user);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  },
+  async removeFriend(req, res) {
+    try {
+      const user = await User.findOneAndUpdate(
+        { _id: req.params.userId },
+        { $pull: { friends: req.params.friendId } },
+        { new: true }
+      );
+      res.json(user);
     } catch (err) {
       res.status(500).json(err);
     }
