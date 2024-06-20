@@ -70,24 +70,25 @@ module.exports = {
           { new: true }
         );
         res.json(updatedThought);
-      } else if (req.method === "DELETE") {
-        const updatedThought = await Thought.findOneAndUpdate(
-          { _id: thoughtId },
-          { $pull: { reactions: { reactionId } } },
-          { new: true }
-        );
-        res.json(updatedThought);
-      } else {
-        res.status(400).json({ message: "Invalid request method" });
       }
     } catch (err) {
+      console.log(err);
       res.status(500).json(err);
     }
   },
   async removeReaction(req, res) {
     try {
       const thoughtid = req.params;
+      if (req.method === "DELETE") {
+        const updatedThought = await Thought.findOneAndUpdate(
+          { _id: thoughtId },
+          { $pull: { reactions: { reactionId } } },
+          { new: true }
+        );
+        res.json(updatedThought);
+      }
     } catch (err) {
+      console.log(err);
       res.status(500).json(err);
     }
   },
