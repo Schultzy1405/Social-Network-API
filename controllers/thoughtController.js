@@ -78,15 +78,16 @@ module.exports = {
   },
   async removeReaction(req, res) {
     try {
-      const thoughtid = req.params;
-      if (req.method === "DELETE") {
-        const updatedThought = await Thought.findOneAndUpdate(
-          { _id: thoughtId },
-          { $pull: { reactions: { reactionId } } },
-          { new: true }
-        );
-        res.json(updatedThought);
+      const { thoughtId, reactionId } = req.params;
+      const updatedThought = await Thought.findOneAndUpdate(
+        { _id: thoughtId },
+        { $pull: { reactions: { reactionId: reactionId } } },
+        { new: true }
+      );
+      if (!updatedThought) {
+        return res.status(404).json({ message: "No thought with that ID" });
       }
+      res.json({ message: "Reaction has been removed.", updatedThought });
     } catch (err) {
       console.log(err);
       res.status(500).json(err);

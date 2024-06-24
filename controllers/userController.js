@@ -49,14 +49,14 @@ module.exports = {
   },
   async deleteUser(req, res) {
     try {
-      const user = await User.findOneAndRemove({ _id: req.params.userId });
-
+      const user = await User.findOneAndDelete({ _id: req.params.userId });
       if (!user) {
         res.status(404).json({ message: "No user with that ID" });
       }
       await Thought.deleteMany({ _id: { $in: user.thoughts } });
       res.json({ message: "User and thoughts deleted!" });
     } catch (err) {
+      console.log(err);
       res.status(500).json(err);
     }
   },
@@ -81,7 +81,7 @@ module.exports = {
       );
       res.json(user);
     } catch (err) {
-      res.status(500).json(err);
+      res.status(500).json({ message: "Friend removed from selected User." });
     }
   },
 };
